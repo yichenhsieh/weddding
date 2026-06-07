@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浩宇 & 宜臻 · 婚禮邀請</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/jf-openhuninn-2.0@2.0.0/source/jf-openhuninn-2.0.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf7f2;
+  --ink:#1e1810;
+  --ink2:#4a3c30;
+  --muted:#9a8878;
+  --gold:#b8915a;
+  --gold2:#d4aa78;
+  --border:#e2d8cc;
+  --rose:#e8b4b8;
+  --rose-lt:#fdf0f1;
+  --step-w:680px;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-weight:300;
+  color:var(--ink);
+}
+.shell{position:relative;width:100%;height:100vh;overflow:hidden}
+
+/* ══ BG ══ */
+.bg-layer{position:absolute;inset:0;z-index:0}
+.bg-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease}
+.bg-slide.active{opacity:1}
+.bg-slide img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
+.bg-layer::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:rgba(20,14,8,.54);pointer-events:none
+}
+
+/* ══ PROGRESS ══ */
+.progress{position:absolute;top:0;left:0;right:0;z-index:20;height:3px;background:rgba(255,255,255,.15)}
+.progress-fill{height:100%;background:var(--gold2);transition:width .5s ease}
+
+/* ══ STEPS ══ */
+.steps-wrap{
+  position:absolute;inset:0;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  padding:60px 28px 40px;
+  pointer-events:none;
+  overflow-y:auto;
+}
+.step{
+  position:absolute;
+  width:min(var(--step-w),100%);
+  pointer-events:all;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .55s ease,transform .55s ease;
+  display:none;
+}
+.step.active{display:block;opacity:1;transform:none}
+.step.exit-up{opacity:0;transform:translateY(-40px);pointer-events:none}
+
+/* ══ TYPOGRAPHY ══ */
+.step-label{font-size:13px;letter-spacing:4px;color:var(--gold2);margin-bottom:16px;opacity:.8;font-family:'Noto Sans TC',sans-serif}
+.step-q{
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-size:clamp(24px,4.5vw,44px);
+  font-weight:300;font-style:normal;color:#fff;line-height:1.3;margin-bottom:10px
+}
+.step-hint{font-size:16px;color:rgba(255,255,255,.6);letter-spacing:.5px;margin-bottom:32px;line-height:1.9}
+
+/* ══ INPUT ══ */
+.big-input{
+  width:100%;background:transparent;border:none;
+  border-bottom:1.5px solid rgba(255,255,255,.4);
+  padding:12px 0;
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-size:clamp(20px,3.5vw,32px);font-weight:300;font-style:normal;
+  color:#fff;outline:none;transition:border-color .2s;caret-color:var(--gold2)
+}
+.big-input::placeholder{color:rgba(255,255,255,.3)}
+.big-input:focus{border-color:var(--gold2)}
+
+/* ══ TEXTAREA ══ */
+.big-textarea{
+  width:100%;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.2);
+  padding:18px 20px;
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;font-size:18px;font-weight:300;
+  color:#fff;outline:none;resize:none;height:110px;
+  transition:border-color .2s;caret-color:var(--gold2)
+}
+.big-textarea::placeholder{color:rgba(255,255,255,.25)}
+.big-textarea:focus{border-color:var(--gold2)}
+
+/* ══ CHOICES ══ */
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{
+  display:flex;align-items:center;gap:18px;
+  padding:14px 20px;
+  border:1px solid rgba(255,255,255,.2);cursor:pointer;
+  transition:all .2s;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)
+}
+.choice:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.12)}
+.choice.selected{border-color:var(--gold2);background:rgba(184,145,90,.18)}
+.choice-key{
+  width:28px;height:28px;border:1px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.5);
+  flex-shrink:0;transition:all .2s
+}
+.choice.selected .choice-key{border-color:var(--gold2);color:var(--gold2);background:rgba(212,170,120,.12)}
+.choice-text{font-size:clamp(17px,2.5vw,22px);color:rgba(255,255,255,.85);font-weight:300}
+.choice.selected .choice-text{color:#fff}
+
+/* ══ TABLE CHOICES ══ */
+.table-choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.tchoice{
+  padding:13px 16px;border:1px solid rgba(255,255,255,.2);cursor:pointer;
+  transition:all .2s;background:rgba(255,255,255,.06);backdrop-filter:blur(6px)
+}
+.tchoice:hover{border-color:rgba(255,255,255,.5)}
+.tchoice.selected{border-color:var(--gold2);background:rgba(184,145,90,.18)}
+.tchoice .tn{display:block;font-size:16px;color:rgba(255,255,255,.85);margin-bottom:4px}
+.tchoice.selected .tn{color:#fff}
+.tchoice .tc{font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.35)}
+.tchoice.selected .tc{color:var(--gold2)}
+
+/* ══ 雙欄問題（出席人數 + 兒童座椅） ══ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.col-block .col-label{
+  font-size:13px;letter-spacing:2px;color:var(--gold2);
+  margin-bottom:14px;opacity:.8
+}
+@media(max-width:520px){.two-col{grid-template-columns:1fr;gap:20px}}
+
+/* ══ BTN ══ */
+.btn-next{
+  margin-top:32px;
+  display:inline-flex;align-items:center;gap:12px;
+  padding:13px 30px;
+  background:var(--gold);border:none;color:#fff;
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;font-size:15px;font-weight:300;
+  letter-spacing:3px;cursor:pointer;transition:background .2s,transform .1s
+}
+.btn-next:hover{background:#a07840}
+.btn-next:active{transform:scale(.98)}
+.btn-next svg{flex-shrink:0}
+.btn-next.ghost{
+  background:transparent;border:1px solid rgba(255,255,255,.35);
+  color:rgba(255,255,255,.7)
+}
+.btn-next.ghost:hover{border-color:rgba(255,255,255,.7);color:#fff;background:rgba(255,255,255,.08)}
+
+/* ══ BACK BUTTON ══ */
+.btn-back{
+  position:absolute;top:20px;left:20px;z-index:20;
+  display:none;align-items:center;gap:8px;
+  background:transparent;border:none;
+  color:rgba(255,255,255,.35);
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-size:11px;letter-spacing:2px;cursor:pointer;
+  padding:8px 10px;transition:color .2s;
+}
+.btn-back:hover{color:rgba(255,255,255,.8)}
+.btn-back.visible{display:flex}
+
+/* ══ COVER ══ */
+.cover-names{
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-size:clamp(40px,8vw,80px);font-weight:200;letter-spacing:12px;font-style:normal;
+  color:#fff;line-height:1;text-align:center;
+  text-shadow:0 4px 40px rgba(0,0,0,.3)
+}
+.cover-amp{font-size:.5em;color:var(--gold2);margin:0 16px;font-style:normal;font-weight:200;letter-spacing:0}
+.cover-rule{width:100px;height:1px;background:linear-gradient(to right,transparent,var(--gold2),transparent);margin:28px auto}
+.cover-date{font-size:15px;letter-spacing:3px;color:rgba(255,255,255,.6);text-align:center;line-height:2.6}
+
+/* success */
+.success-icon{font-size:48px;text-align:center;margin-bottom:20px;animation:pop .5s cubic-bezier(.18,.89,.32,1.28)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ══ PHOTO UPLOAD ══ */
+.photo-upload-hint{
+  position:absolute;bottom:18px;right:20px;z-index:15;
+  font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.3);
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s
+}
+.photo-upload-hint:hover{color:rgba(255,255,255,.7)}
+
+/* dots */
+#slideDots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:15;display:flex;gap:7px}
+
+.step-counter{font-size:13px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:22px}
+
+@media(max-width:480px){
+  .steps-wrap{padding:50px 18px 28px}
+  .table-choices{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <button class="btn-back" id="backBtn" onclick="goBack()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    返回
+  </button>
+
+  <div class="bg-layer" id="bgLayer"></div>
+
+  <div class="photo-upload-hint" onclick="document.getElementById('photoInput').click()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    <span id="uploadLabel">上傳婚紗照（可多張）</span>
+  </div>
+  <div id="slideDots"></div>
+  <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhoto(event)">
+
+  <div class="steps-wrap">
+
+    <!-- 0: Cover -->
+    <div class="step active" id="step0">
+      <div style="text-align:center">
+        <div style="font-size:13px;letter-spacing:5px;color:var(--gold2);margin-bottom:32px">WEDDING INVITATION</div>
+        <div class="cover-names">浩宇<span class="cover-amp">&amp;</span>宜臻</div>
+        <div class="cover-rule"></div>
+        <div class="cover-date">
+          二〇二五年 十月 二十五日（日）<br><br>
+          15:30 &nbsp;婚禮 &nbsp;·&nbsp; 武昌新世代教會<br>
+          18:00 &nbsp;婚宴 &nbsp;·&nbsp; 高雄聯上大飯店
+        </div>
+        <div style="margin-top:48px">
+          <button class="btn-next" onclick="goTo(1)">
+            回覆出席
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1: 與新人的關係 -->
+    <div class="step" id="step1">
+      <div class="step-counter" id="counter1"></div>
+      <div class="step-label">關係</div>
+      <div class="step-q">您與新人的關係？</div>
+      <div class="step-hint">請選擇一個選項</div>
+      <div class="choices">
+        <div class="choice" onclick="pickRelation('男方親友 👨')"><div class="choice-key">A</div><div class="choice-text">👨 &nbsp;男方親友</div></div>
+        <div class="choice" onclick="pickRelation('女方親友 👩')"><div class="choice-key">B</div><div class="choice-text">👩 &nbsp;女方親友</div></div>
+        <div class="choice" onclick="pickRelation('教會家人 ⛪')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會家人</div></div>
+      </div>
+    </div>
+
+    <!-- 2: 姓名 -->
+    <div class="step" id="step2">
+      <div class="step-counter" id="counter2"></div>
+      <div class="step-label">姓名</div>
+      <div class="step-q">請問您的大名？</div>
+      <div class="step-hint">新人很期待看到您的名字 🌸</div>
+      <input class="big-input" type="text" id="inp-name" placeholder="在這裡輸入…" autocomplete="off" onkeydown="if(event.key==='Enter')tryName()">
+      <div><button class="btn-next" onclick="tryName()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+    </div>
+
+    <!-- 3: 綽號 -->
+    <div class="step" id="step3">
+      <div class="step-counter" id="counter3"></div>
+      <div class="step-label">綽號</div>
+      <div class="step-q" id="q3">新郎新娘怎麼稱呼您？</div>
+      <div class="step-hint">例如：阿明、小姑姑…（可略過）</div>
+      <input class="big-input" type="text" id="inp-nickname" placeholder="在這裡輸入…" autocomplete="off" onkeydown="if(event.key==='Enter')goTo(4)">
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <button class="btn-next" onclick="saveNickname()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-next ghost" onclick="goTo(4)">略過</button>
+      </div>
+    </div>
+
+    <!-- 4: 電話 -->
+    <div class="step" id="step4">
+      <div class="step-counter" id="counter4"></div>
+      <div class="step-label">聯絡方式</div>
+      <div class="step-q">您的聯絡電話？</div>
+      <div class="step-hint">方便新人與您確認細節（可略過）</div>
+      <input class="big-input" type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onkeydown="if(event.key==='Enter')goTo(5)">
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <button class="btn-next" onclick="goTo(5)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-next ghost" onclick="goTo(5)">略過</button>
+      </div>
+    </div>
+
+    <!-- 5: 出席統計 -->
+    <div class="step" id="step5">
+      <div class="step-counter" id="counter5"></div>
+      <div class="step-label">出席確認</div>
+      <div class="step-q" id="q5">您會出席嗎？</div>
+      <div class="step-hint">請選擇出席方式</div>
+      <div class="choices">
+        <div class="choice" onclick="pickAttend('婚禮＋婚宴都參加')"><div class="choice-key">A</div><div class="choice-text">💒 &nbsp;婚禮＋婚宴，我都會參加</div></div>
+        <div class="choice" onclick="pickAttend('只參加婚禮')"><div class="choice-key">B</div><div class="choice-text">👰 &nbsp;我只能參加婚禮</div></div>
+        <div class="choice" onclick="pickAttend('只參加婚宴')"><div class="choice-key">C</div><div class="choice-text">🥂 &nbsp;我只能參加婚宴</div></div>
+        <div class="choice" onclick="pickAttend('無法到場')"><div class="choice-key">D</div><div class="choice-text">💝 &nbsp;很遺憾無法到場，獻上祝福</div></div>
+      </div>
+    </div>
+
+    <!-- 5b: 婚禮時間資訊（只參加婚禮時顯示） -->
+    <div class="step" id="step5b">
+      <div class="step-counter" id="counter5b"></div>
+      <div class="step-label">婚禮資訊</div>
+      <div class="step-q">婚禮時間與地點</div>
+      <div class="step-hint">期待與您在這美好時刻相聚 💒</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:36px">
+        <div style="border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);backdrop-filter:blur(6px);padding:22px 24px;">
+          <div style="font-size:10px;letter-spacing:3px;color:var(--gold2);margin-bottom:12px">婚禮典禮</div>
+          <div style="font-size:clamp(18px,3vw,24px);color:#fff;font-family:'Cormorant Garamond',serif;font-style:italic;margin-bottom:8px">15:30 開始</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.65);line-height:2;letter-spacing:.5px">
+            武昌新世代教會<br>
+            高雄市左營區裕誠路 398 號 2 樓
+          </div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);padding:18px 24px;">
+          <div style="font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.3);margin-bottom:8px">婚宴（您無法參加）</div>
+          <div style="font-size:18px;color:rgba(255,255,255,.3);font-family:'Cormorant Garamond',serif;font-style:italic;margin-bottom:6px;text-decoration:line-through">18:00 開席</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.25);letter-spacing:.5px">高雄聯上大飯店 · 環球廳</div>
+        </div>
+      </div>
+      <div><button class="btn-next" onclick="goTo(6)">了解，繼續填寫 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+    </div>
+
+    <!-- 6: 出席人數 + 兒童座椅 -->
+    <div class="step" id="step6">
+      <div class="step-counter" id="counter6"></div>
+      <div class="step-label">出席安排</div>
+      <div class="step-q">出席人數與兒童座椅</div>
+      <div class="step-hint">人數請包含自己喔，方便我們分配座位</div>
+      <div class="two-col">
+        <div class="col-block">
+          <div class="col-label">共幾個人出席</div>
+          <div class="choices" id="count-choices">
+            <div class="choice" onclick="pickCount('1',this)"><div class="choice-key">1</div><div class="choice-text">1 人</div></div>
+            <div class="choice" onclick="pickCount('2',this)"><div class="choice-key">2</div><div class="choice-text">2 人</div></div>
+            <div class="choice" onclick="pickCount('3',this)"><div class="choice-key">3</div><div class="choice-text">3 人</div></div>
+            <div class="choice" onclick="pickCount('4',this)"><div class="choice-key">4</div><div class="choice-text">4 人</div></div>
+            <div class="choice" onclick="pickCount('5',this)"><div class="choice-key">5</div><div class="choice-text">5 人</div></div>
+          </div>
+        </div>
+        <div class="col-block">
+          <div class="col-label">需要兒童座椅嗎？</div>
+          <div class="choices" id="child-choices">
+            <div class="choice" onclick="pickChild('不需要',this)"><div class="choice-key">A</div><div class="choice-text">不需要</div></div>
+            <div class="choice" onclick="pickChild('需要 1 張',this)"><div class="choice-key">B</div><div class="choice-text">需要 1 張</div></div>
+            <div class="choice" onclick="pickChild('需要 2 張',this)"><div class="choice-key">C</div><div class="choice-text">需要 2 張</div></div>
+            <div class="choice" onclick="pickChild('需要 3 張以上',this)"><div class="choice-key">D</div><div class="choice-text">3 張以上</div></div>
+          </div>
+        </div>
+      </div>
+      <div><button class="btn-next" onclick="tryStep6()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+    </div>
+
+    <!-- 7: 飲食 -->
+    <div class="step" id="step7">
+      <div class="step-counter" id="counter7"></div>
+      <div class="step-label">飲食需求</div>
+      <div class="step-q">有特殊飲食需求嗎？</div>
+      <div class="step-hint">我們會提前告知餐廳安排</div>
+      <div class="choices">
+        <div class="choice" onclick="pickDiet('無特殊需求')"><div class="choice-key">A</div><div class="choice-text">無，什麼都可以吃</div></div>
+        <div class="choice" onclick="pickDiet('素食')"><div class="choice-key">B</div><div class="choice-text">素食</div></div>
+        <div class="choice" onclick="pickDiet('海鮮過敏')"><div class="choice-key">C</div><div class="choice-text">海鮮過敏</div></div>
+        <div class="choice" onclick="pickDiet('堅果過敏')"><div class="choice-key">D</div><div class="choice-text">堅果過敏</div></div>
+      </div>
+    </div>
+
+    <!-- 8: 桌次 -->
+    <div class="step" id="step8">
+      <div class="step-counter" id="counter8"></div>
+      <div class="step-label">賓桌</div>
+      <div class="step-q">您屬於哪一桌？</div>
+      <div class="step-hint">新人已為您安排好座位</div>
+      <div class="table-choices" id="tableChoices"></div>
+      <div><button class="btn-next" onclick="tryNextTable()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+    </div>
+
+    <!-- 9: 喜帖 -->
+    <div class="step" id="step9">
+      <div class="step-counter" id="counter9"></div>
+      <div class="step-label">喜帖</div>
+      <div class="step-q">需要寄送喜帖嗎？</div>
+      <div class="step-hint">請選擇您希望收到的方式</div>
+      <div class="choices">
+        <div class="choice" onclick="pickInvite('電子喜帖')"><div class="choice-key">A</div><div class="choice-text">🌐 &nbsp;響應環保，我要電子喜帖</div></div>
+        <div class="choice" onclick="pickInvite('紙本喜帖')"><div class="choice-key">B</div><div class="choice-text">📮 &nbsp;要留做紀念，我要紙本喜帖</div></div>
+        <div class="choice" onclick="pickInvite('不用唷')"><div class="choice-key">C</div><div class="choice-text">✌️ &nbsp;不用唷，婚禮相關資訊我知道了</div></div>
+      </div>
+    </div>
+
+    <!-- 10a: 電子喜帖 → Email -->
+    <div class="step" id="step10a">
+      <div class="step-counter" id="counter10a"></div>
+      <div class="step-label">電子喜帖</div>
+      <div class="step-q">請留下您的 Email</div>
+      <div class="step-hint">新人會將電子喜帖寄到您的信箱 📧</div>
+      <input class="big-input" type="email" id="inp-email" placeholder="example@gmail.com" autocomplete="email" onkeydown="if(event.key==='Enter')saveEmail()">
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <button class="btn-next" onclick="saveEmail()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-next ghost" onclick="goTo(11)">略過</button>
+      </div>
+    </div>
+
+    <!-- 10b: 紙本喜帖 → 地址 -->
+    <div class="step" id="step10b">
+      <div class="step-counter" id="counter10b"></div>
+      <div class="step-label">紙本喜帖</div>
+      <div class="step-q">請留下您的郵寄地址</div>
+      <div class="step-hint">813 高雄市 XX 區 XX 路 XX 號（請依格式填寫）📮</div>
+      <input class="big-input" type="text" id="inp-address" placeholder="縣市 · 區 · 路街地址…" autocomplete="street-address" onkeydown="if(event.key==='Enter')saveAddress()">
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <button class="btn-next" onclick="saveAddress()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-next ghost" onclick="goTo(11)">略過</button>
+      </div>
+    </div>
+
+    <!-- 11: 留言 -->
+    <div class="step" id="step11">
+      <div class="step-counter" id="counter11"></div>
+      <div class="step-label">祝福留言</div>
+      <div class="step-q">給新人一句祝福？</div>
+      <div class="step-hint">您的祝福是新人最好的禮物 💌（可略過）</div>
+      <textarea class="big-textarea" id="inp-message" placeholder="寫下您的祝福…"></textarea>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px">
+        <button class="btn-next" onclick="submitForm()">送出回覆 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 19 19"/></svg></button>
+        <button class="btn-next ghost" onclick="submitForm()">略過並送出</button>
+      </div>
+    </div>
+
+    <!-- 12: Success -->
+    <div class="step" id="step12">
+      <div style="text-align:center">
+        <div class="success-icon">🌸</div>
+        <div class="cover-names" style="font-size:clamp(28px,5vw,44px);margin-bottom:16px" id="successName"></div>
+        <div class="cover-rule"></div>
+        <div class="cover-date" id="successMsg">感謝您的回覆<br>新人期待與您共度這美好時刻</div>
+      </div>
+    </div>
+
+  </div><!-- /steps-wrap -->
+</div><!-- /shell -->
+
+<script>
+// ══ CONFIG ══
+const SHEET_URL = 'https://script.google.com/macros/s/請填入您的部署URL/exec';
+const DEFAULT_PHOTOS = [
+  { src: 'photos/photo12.jpg', pos: 'center 40%' },
+  { src: 'photos/photo14.jpg', pos: 'center 35%' },
+  { src: 'photos/photo16.jpg', pos: 'center 40%' },
+  { src: 'photos/photo10.jpg', pos: 'center 45%' },
+  { src: 'photos/photo11.jpg', pos: 'center 35%' },
+];
+const TABLES = [
+  {name:'新郎親屬桌', cat:'親屬'},
+  {name:'新娘親屬桌', cat:'親屬'},
+  {name:'新世代教會家人桌', cat:'教會'},
+  {name:'新郎朋友桌', cat:'好友'},
+  {name:'新娘朋友桌', cat:'好友'},
+];
+// 步驟標籤（進度用）
+const STEP_LABELS = {
+  1:'1/11',2:'2/11',3:'3/11',4:'4/11',5:'5/11',
+  '5b':'5/11',
+  6:'6/11',7:'7/11',8:'8/11',9:'9/11',
+  '10a':'10/11','10b':'10/11',11:'11/11'
+};
+const PROGRESS_MAP = {
+  0:0,1:9,2:18,3:27,4:36,5:45,'5b':50,6:54,7:63,8:72,9:81,'10a':87,'10b':87,11:95,12:100
+};
+
+// ══ STATE ══
+let cur = 0;
+let history = [];
+let data = {relation:'',name:'',nickname:'',phone:'',attend:'',count:'',childSeat:'',diet:'',table:'',invite:'',email:'',address:'',message:''};
+
+// ══ TABLES ══
+function renderTables(){
+  document.getElementById('tableChoices').innerHTML = TABLES.map((t,i)=>`
+    <div class="tchoice" id="tc${i}" onclick="pickTable(${i})">
+      <span class="tn">${t.name}</span>
+      <span class="tc">${t.cat}</span>
+    </div>`).join('');
+}
+
+// ══ NAVIGATION ══
+function goTo(n, addHistory=true){
+  if(addHistory && cur !== 0) history.push(cur);
+  const prev = document.getElementById('step'+cur);
+  prev.classList.add('exit-up');
+  setTimeout(()=>{prev.classList.remove('active','exit-up');prev.style.display='none'},500);
+  cur = n;
+  const next = document.getElementById('step'+cur);
+  next.style.display='block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('active')));
+  updateProgress();
+  updateCounters();
+  updateBackBtn();
+  setTimeout(()=>{ const inp=next.querySelector('.big-input'); if(inp) inp.focus(); },560);
+}
+
+function goBack(){
+  if(history.length===0) return;
+  goTo(history.pop(), false);
+}
+
+function updateBackBtn(){
+  const btn = document.getElementById('backBtn');
+  (cur===0||cur===12) ? btn.classList.remove('visible') : btn.classList.add('visible');
+}
+
+function updateProgress(){
+  const pct = PROGRESS_MAP[cur] ?? 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+}
+
+function updateCounters(){
+  Object.entries(STEP_LABELS).forEach(([k,v])=>{
+    const el = document.getElementById('counter'+k);
+    if(el) el.textContent = v;
+  });
+}
+
+// ══ PICKERS ══
+function pickRelation(v){
+  data.relation = v;
+  document.querySelectorAll('#step1 .choice').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(()=>goTo(2), 380);
+}
+
+function tryName(){
+  const v = document.getElementById('inp-name').value.trim();
+  if(!v){ document.getElementById('inp-name').focus(); return; }
+  data.name = v;
+  document.getElementById('q3').textContent = v+'，新郎新娘怎麼稱呼您？';
+  document.getElementById('q5').textContent = v+'，您會出席嗎？';
+  goTo(3);
+}
+
+function saveNickname(){
+  data.nickname = document.getElementById('inp-nickname').value.trim();
+  goTo(4);
+}
+
+function pickAttend(v){
+  data.attend = v;
+  document.querySelectorAll('#step5 .choice').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  if(v==='無法到場'){
+    setTimeout(()=>{
+      document.getElementById('successName').textContent = data.name+'，';
+      document.getElementById('successMsg').innerHTML = '非常感謝您的告知<br>期待下次有機會相聚 💝';
+      submitForm(true);
+    }, 420);
+  } else if(v==='只參加婚禮'){
+    setTimeout(()=>goTo('5b'), 380);
+  } else {
+    setTimeout(()=>goTo(6), 380);
+  }
+}
+
+function pickCount(v, el){
+  data.count = v;
+  document.querySelectorAll('#count-choices .choice').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function pickChild(v, el){
+  data.childSeat = v;
+  document.querySelectorAll('#child-choices .choice').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function tryStep6(){
+  if(!data.count){ alert('請選擇出席人數'); return; }
+  if(!data.childSeat){ alert('請選擇是否需要兒童座椅'); return; }
+  goTo(7);
+}
+
+function pickDiet(v){
+  data.diet = v;
+  document.querySelectorAll('#step7 .choice').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(()=>goTo(8), 380);
+}
+
+function pickTable(i){
+  data.table = TABLES[i].name;
+  document.querySelectorAll('.tchoice').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('tc'+i).classList.add('selected');
+}
+
+function tryNextTable(){
+  if(!data.table){ alert('請選擇您的賓桌'); return; }
+  goTo(9);
+}
+
+function pickInvite(v){
+  data.invite = v;
+  document.querySelectorAll('#step9 .choice').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  if(v==='電子喜帖') setTimeout(()=>goTo('10a'), 380);
+  else if(v==='紙本喜帖') setTimeout(()=>goTo('10b'), 380);
+  else setTimeout(()=>goTo(11), 380);
+}
+
+function saveEmail(){
+  data.email = document.getElementById('inp-email').value.trim();
+  goTo(11);
+}
+
+function saveAddress(){
+  data.address = document.getElementById('inp-address').value.trim();
+  goTo(11);
+}
+
+// ══ SLIDESHOW ══
+let slides=[], slideIdx=0, slideTimer=null;
+
+function handlePhoto(e){
+  const files=Array.from(e.target.files); if(!files.length) return;
+  let loaded=0; const newSlides=[];
+  files.forEach((file,i)=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      newSlides[i]={src:ev.target.result,pos:'center 40%'}; loaded++;
+      if(loaded===files.length){
+        slides=[...slides,...newSlides.filter(Boolean)];
+        buildSlides();
+        document.getElementById('uploadLabel').textContent=slides.length+' 張照片已載入';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function buildSlides(){
+  const layer=document.getElementById('bgLayer');
+  layer.querySelectorAll('.bg-slide').forEach(s=>s.remove());
+  slides.forEach((src,i)=>{
+    const div=document.createElement('div');
+    div.className='bg-slide'+(i===0?' active':'');
+    div.id='slide'+i;
+    const img=document.createElement('img');
+    img.src=typeof src==='object'?src.src:src;
+    img.alt='';
+    img.style.objectPosition=(typeof src==='object'&&src.pos)?src.pos:'center 40%';
+    div.appendChild(img); layer.appendChild(div);
+  });
+  buildDots();
+  if(slideTimer) clearInterval(slideTimer);
+  if(slides.length>1){ slideIdx=0; slideTimer=setInterval(nextSlide,4500); }
+}
+
+function nextSlide(){
+  const prev=slideIdx; slideIdx=(slideIdx+1)%slides.length;
+  document.getElementById('slide'+prev).classList.remove('active');
+  document.getElementById('slide'+slideIdx).classList.add('active');
+  updateDots();
+}
+
+function buildDots(){
+  const wrap=document.getElementById('slideDots'); wrap.innerHTML='';
+  if(slides.length<=1){ wrap.style.display='none'; return; }
+  wrap.style.display='flex';
+  slides.forEach((_,i)=>{
+    const dot=document.createElement('div');
+    dot.style.cssText='width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,'+(i===slideIdx?'.85':'.3')+');transition:background .3s;cursor:pointer';
+    dot.onclick=()=>{
+      clearInterval(slideTimer);
+      document.getElementById('slide'+slideIdx).classList.remove('active');
+      slideIdx=i;
+      document.getElementById('slide'+slideIdx).classList.add('active');
+      updateDots();
+      slideTimer=setInterval(nextSlide,4500);
+    };
+    wrap.appendChild(dot);
+  });
+}
+
+function updateDots(){
+  const dots=document.getElementById('slideDots').children;
+  Array.from(dots).forEach((d,i)=>{ d.style.background='rgba(255,255,255,'+(i===slideIdx?'.85':'.3')+')'; });
+}
+
+// ══ SUBMIT ══
+async function submitForm(skipSteps=false){
+  if(!skipSteps){
+    data.message = document.getElementById('inp-message').value.trim();
+  }
+  data.phone = document.getElementById('inp-phone').value.trim();
+  data.timestamp = new Date().toLocaleString('zh-TW');
+  document.getElementById('successName').textContent = data.name+'，';
+  goTo(12);
+  try{
+    if(!SHEET_URL.includes('請填入')){
+      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',
+        body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+    } else { console.log('RSVP data:',data); }
+  }catch(e){console.warn(e)}
+}
+
+// ══ KEYBOARD ══
+document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&cur===0) goTo(1); });
+
+renderTables();
+updateCounters();
+
+if(DEFAULT_PHOTOS.length>0){
+  slides=DEFAULT_PHOTOS.slice();
+  buildSlides();
+  document.getElementById('uploadLabel').textContent=slides.length+' 張照片已載入';
+}
+</script>
+
+
+<!--
+════════════════════════════════════════════
+  Google Apps Script（貼入 Apps Script 使用）
+════════════════════════════════════════════
+function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const data  = JSON.parse(e.postData.contents);
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['時間戳記','姓名','電話','是否出席','人數','兒童座椅','飲食需求','桌次','喜帖','地址','Email','祝福留言']);
+    }
+    sheet.appendRow([
+      data.timestamp, data.name, data.phone, data.attend,
+      data.count, data.childSeat, data.diet, data.table,
+      data.invite, data.address, data.email, data.message
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+════════════════════════════════════════════
+-->
+</body>
+</html>

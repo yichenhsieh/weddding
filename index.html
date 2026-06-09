@@ -46,21 +46,24 @@ body{
 /* ══ STEPS ══ */
 .steps-wrap{
   position:absolute;inset:0;z-index:10;
-  display:flex;align-items:center;justify-content:center;
-  padding:60px 28px 40px;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:60px 28px 60px;
   pointer-events:none;
   overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   box-sizing:border-box;
 }
 .step{
-  position:absolute;
-  left:28px;right:28px;
+  position:relative;
+  left:auto;right:auto;
+  width:100%;
   max-width:var(--step-w);
-  margin:0 auto;
+  margin:auto;
   pointer-events:all;
   opacity:0;transform:translateY(40px);
   transition:opacity .55s ease,transform .55s ease;
   display:none;
+  padding:0 4px;
 }
 .step.active{display:block;opacity:1;transform:none}
 .step.exit-up{opacity:0;transform:translateY(-40px);pointer-events:none}
@@ -201,8 +204,8 @@ body{
 .step-counter{font-size:13px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:22px}
 
 @media(max-width:480px){
-  .steps-wrap{padding:60px 20px 36px}
-  .step{left:20px;right:20px}
+  .steps-wrap{padding:60px 20px 80px;align-items:flex-start}
+  .step{padding:0}
   .table-choices{grid-template-columns:1fr 1fr}
   .two-col{grid-template-columns:1fr}
   .btn-back{left:14px}
@@ -470,7 +473,11 @@ const PHOTOS_LANDSCAPE = [
 // 直式照片（手機版）
 const PHOTOS_PORTRAIT = [
   { src: 'portrait1.jpg', pos: 'center 25%' },
-  // 可繼續新增直式照片
+  { src: 'photo3.jpg',   pos: 'center 30%' },
+  { src: 'photo4.jpg',   pos: 'center 28%' },
+  { src: 'photo8.jpg',   pos: 'center 25%' },
+  { src: 'photo9.jpg',   pos: 'center 35%' },
+  { src: 'photo13.jpg',  pos: 'center 30%' },
 ];
 
 // 根據螢幕寬度自動選擇
@@ -518,6 +525,9 @@ function goTo(n, addHistory=true){
   cur = n;
   const next = document.getElementById('step'+cur);
   next.style.display='block';
+  // scroll to top of steps-wrap on each step change
+  const wrap = document.querySelector('.steps-wrap');
+  if(wrap) wrap.scrollTop = 0;
   requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('active')));
   updateProgress();
   updateCounters();

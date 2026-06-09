@@ -46,24 +46,26 @@ body{
 /* ══ STEPS ══ */
 .steps-wrap{
   position:absolute;inset:0;z-index:10;
-  display:flex;align-items:flex-start;justify-content:center;
-  padding:60px 28px 60px;
   pointer-events:none;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  box-sizing:border-box;
 }
 .step{
-  position:relative;
-  left:auto;right:auto;
-  width:100%;
-  max-width:var(--step-w);
-  margin:auto;
-  pointer-events:all;
-  opacity:0;transform:translateY(40px);
-  transition:opacity .55s ease,transform .55s ease;
+  position:absolute;
+  inset:0;
   display:none;
-  padding:0 4px;
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity .55s ease, transform .55s ease;
+  pointer-events:all;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box;
+  padding:60px 28px 80px;
+}
+.step-inner{
+  max-width:var(--step-w);
+  margin:0 auto;
+  width:100%;
 }
 .step.active{display:block;opacity:1;transform:none}
 .step.exit-up{opacity:0;transform:translateY(-40px);pointer-events:none}
@@ -204,8 +206,7 @@ body{
 .step-counter{font-size:13px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:22px}
 
 @media(max-width:480px){
-  .steps-wrap{padding:60px 20px 80px;align-items:flex-start}
-  .step{padding:0}
+  .step{padding:56px 20px 80px}
   .table-choices{grid-template-columns:1fr 1fr}
   .two-col{grid-template-columns:1fr}
   .btn-back{left:14px}
@@ -234,6 +235,7 @@ body{
 
     <!-- 0: Cover -->
     <div class="step active" id="step0">
+      <div class="step-inner">
       <div style="text-align:center">
         <div style="font-size:13px;letter-spacing:5px;color:var(--gold2);margin-bottom:32px">WEDDING INVITATION</div>
         <div class="cover-names">浩宇<span class="cover-amp">&amp;</span>宜臻</div>
@@ -250,11 +252,12 @@ body{
           </button>
         </div>
       </div>
+      </div>
     </div>
 
     <!-- 1: 與新人的關係 -->
     <div class="step" id="step1">
-      <div class="step-counter" id="counter1"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter1"></div>
       <div class="step-label">關係</div>
       <div class="step-q">您與新人的關係？</div>
       <div class="step-hint">請選擇一個選項</div>
@@ -262,22 +265,22 @@ body{
         <div class="choice" onclick="pickRelation('男方親友 👨')"><div class="choice-key">A</div><div class="choice-text">👨 &nbsp;男方親友</div></div>
         <div class="choice" onclick="pickRelation('女方親友 👩')"><div class="choice-key">B</div><div class="choice-text">👩 &nbsp;女方親友</div></div>
         <div class="choice" onclick="pickRelation('教會家人 ⛪')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會家人</div></div>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 2: 姓名 -->
     <div class="step" id="step2">
-      <div class="step-counter" id="counter2"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter2"></div>
       <div class="step-label">姓名</div>
       <div class="step-q">請問您的大名？</div>
       <div class="step-hint">新人很期待看到您的名字 🌸</div>
       <input class="big-input" type="text" id="inp-name" placeholder="在這裡輸入…" autocomplete="off" onkeydown="if(event.key==='Enter')tryName()">
-      <div><button class="btn-next" onclick="tryName()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      <div><button class="btn-next" onclick="tryName()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
     </div>
 
     <!-- 3: 綽號 -->
     <div class="step" id="step3">
-      <div class="step-counter" id="counter3"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter3"></div>
       <div class="step-label">綽號</div>
       <div class="step-q" id="q3">新郎新娘怎麼稱呼您？</div>
       <div class="step-hint">例如：阿明、小姑姑…（可略過）</div>
@@ -285,12 +288,12 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap">
         <button class="btn-next" onclick="saveNickname()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(4)">略過</button>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 4: 電話 -->
     <div class="step" id="step4">
-      <div class="step-counter" id="counter4"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter4"></div>
       <div class="step-label">聯絡方式</div>
       <div class="step-q">您的聯絡電話？</div>
       <div class="step-hint">方便新人與您確認細節（可略過）</div>
@@ -298,12 +301,12 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap">
         <button class="btn-next" onclick="goTo(5)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(5)">略過</button>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 5: 出席統計 -->
     <div class="step" id="step5">
-      <div class="step-counter" id="counter5"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter5"></div>
       <div class="step-label">出席確認</div>
       <div class="step-q" id="q5">您會出席嗎？</div>
       <div class="step-hint">請選擇出席方式</div>
@@ -312,12 +315,12 @@ body{
         <div class="choice" onclick="pickAttend('只參加婚禮')"><div class="choice-key">B</div><div class="choice-text">👰 &nbsp;我只能參加婚禮</div></div>
         <div class="choice" onclick="pickAttend('只參加婚宴')"><div class="choice-key">C</div><div class="choice-text">🥂 &nbsp;我只能參加婚宴</div></div>
         <div class="choice" onclick="pickAttend('無法到場')"><div class="choice-key">D</div><div class="choice-text">💝 &nbsp;很遺憾無法到場，獻上祝福</div></div>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 5b: 婚禮時間資訊（只參加婚禮時顯示） -->
     <div class="step" id="step5b">
-      <div class="step-counter" id="counter5b"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter5b"></div>
       <div class="step-label">婚禮資訊</div>
       <div class="step-q">婚禮時間與地點</div>
       <div class="step-hint">期待與您在這美好時刻相聚 💒</div>
@@ -336,12 +339,12 @@ body{
           <div style="font-size:12px;color:rgba(255,255,255,.25);letter-spacing:.5px">高雄聯上大飯店 · 環球廳</div>
         </div>
       </div>
-      <div><button class="btn-next" onclick="goTo(6)">了解，繼續填寫 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      <div><button class="btn-next" onclick="goTo(6)">了解，繼續填寫 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
     </div>
 
     <!-- 6: 出席人數 + 兒童座椅 -->
     <div class="step" id="step6">
-      <div class="step-counter" id="counter6"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter6"></div>
       <div class="step-label">出席安排</div>
       <div class="step-q">出席人數與兒童座椅</div>
       <div class="step-hint">人數請包含自己喔，方便我們分配座位</div>
@@ -366,12 +369,12 @@ body{
           </div>
         </div>
       </div>
-      <div><button class="btn-next" onclick="tryStep6()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      <div><button class="btn-next" onclick="tryStep6()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
     </div>
 
     <!-- 7: 飲食 -->
     <div class="step" id="step7">
-      <div class="step-counter" id="counter7"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter7"></div>
       <div class="step-label">飲食需求</div>
       <div class="step-q">有特殊飲食需求嗎？</div>
       <div class="step-hint">我們會提前告知餐廳安排</div>
@@ -380,22 +383,22 @@ body{
         <div class="choice" onclick="pickDiet('素食')"><div class="choice-key">B</div><div class="choice-text">素食</div></div>
         <div class="choice" onclick="pickDiet('海鮮過敏')"><div class="choice-key">C</div><div class="choice-text">海鮮過敏</div></div>
         <div class="choice" onclick="pickDiet('堅果過敏')"><div class="choice-key">D</div><div class="choice-text">堅果過敏</div></div>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 8: 桌次 -->
     <div class="step" id="step8">
-      <div class="step-counter" id="counter8"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter8"></div>
       <div class="step-label">賓桌</div>
       <div class="step-q">您屬於哪一桌？</div>
       <div class="step-hint">新人已為您安排好座位</div>
       <div class="table-choices" id="tableChoices"></div>
-      <div><button class="btn-next" onclick="tryNextTable()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      <div><button class="btn-next" onclick="tryNextTable()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
     </div>
 
     <!-- 9: 喜帖 -->
     <div class="step" id="step9">
-      <div class="step-counter" id="counter9"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter9"></div>
       <div class="step-label">喜帖</div>
       <div class="step-q">需要寄送喜帖嗎？</div>
       <div class="step-hint">請選擇您希望收到的方式</div>
@@ -403,12 +406,12 @@ body{
         <div class="choice" onclick="pickInvite('電子喜帖')"><div class="choice-key">A</div><div class="choice-text">🌐 &nbsp;響應環保，我要電子喜帖</div></div>
         <div class="choice" onclick="pickInvite('紙本喜帖')"><div class="choice-key">B</div><div class="choice-text">📮 &nbsp;要留做紀念，我要紙本喜帖</div></div>
         <div class="choice" onclick="pickInvite('不用唷')"><div class="choice-key">C</div><div class="choice-text">✌️ &nbsp;不用唷，婚禮相關資訊我知道了</div></div>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 10a: 電子喜帖 → Email -->
     <div class="step" id="step10a">
-      <div class="step-counter" id="counter10a"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter10a"></div>
       <div class="step-label">電子喜帖</div>
       <div class="step-q">請留下您的 Email</div>
       <div class="step-hint">新人會將電子喜帖寄到您的信箱 📧</div>
@@ -416,12 +419,12 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap">
         <button class="btn-next" onclick="saveEmail()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(11)">略過</button>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 10b: 紙本喜帖 → 地址 -->
     <div class="step" id="step10b">
-      <div class="step-counter" id="counter10b"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter10b"></div>
       <div class="step-label">紙本喜帖</div>
       <div class="step-q">請留下您的郵寄地址</div>
       <div class="step-hint">813 高雄市 XX 區 XX 路 XX 號（請依格式填寫）📮</div>
@@ -429,12 +432,12 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap">
         <button class="btn-next" onclick="saveAddress()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(11)">略過</button>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 11: 留言 -->
     <div class="step" id="step11">
-      <div class="step-counter" id="counter11"></div>
+      <div class="step-inner">      <div class="step-counter" id="counter11"></div>
       <div class="step-label">祝福留言</div>
       <div class="step-q">給新人一句祝福？</div>
       <div class="step-hint">您的祝福是新人最好的禮物 💌（可略過）</div>
@@ -442,17 +445,17 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px">
         <button class="btn-next" onclick="submitForm()">送出回覆 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 19 19"/></svg></button>
         <button class="btn-next ghost" onclick="submitForm()">略過並送出</button>
-      </div>
+      </div>      </div>
     </div>
 
     <!-- 12: Success -->
     <div class="step" id="step12">
-      <div style="text-align:center">
+      <div class="step-inner">      <div style="text-align:center">
         <div class="success-icon">🌸</div>
         <div class="cover-names" style="font-size:clamp(28px,5vw,44px);margin-bottom:16px" id="successName"></div>
         <div class="cover-rule"></div>
         <div class="cover-date" id="successMsg">感謝您的回覆<br>新人期待與您共度這美好時刻</div>
-      </div>
+      </div>      </div>
     </div>
 
   </div><!-- /steps-wrap -->
@@ -525,9 +528,9 @@ function goTo(n, addHistory=true){
   cur = n;
   const next = document.getElementById('step'+cur);
   next.style.display='block';
-  // scroll to top of steps-wrap on each step change
-  const wrap = document.querySelector('.steps-wrap');
-  if(wrap) wrap.scrollTop = 0;
+  // scroll step itself to top
+  const nextEl = document.getElementById('step'+n);
+  if(nextEl) nextEl.scrollTop = 0;
   requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('active')));
   updateProgress();
   updateCounters();

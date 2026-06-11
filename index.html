@@ -479,7 +479,7 @@ body{
 
 <script>
 // ══ CONFIG ══
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyPD9P_b4eAwoB23WqjsjY6PHhjbcILAwAzbAMcxZwJwIAnL5BbAyPxhvd9qFnFh0Yh/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/請填入您的部署URL/exec';
 // 橫式照片（電腦版）
 const PHOTOS_LANDSCAPE = [
   { src: 'photo12.jpg', pos: 'center 40%' },
@@ -497,6 +497,7 @@ const PHOTOS_PORTRAIT = [
   { src: 'photo8.jpg',   pos: 'center 25%' },
   { src: 'photo9.jpg',   pos: 'center 35%' },
   { src: 'photo13.jpg',  pos: '60% 30%' },
+  { src: 'photo11.jpg',  pos: 'center 35%' },
 ];
 
 // 根據螢幕寬度自動選擇
@@ -504,11 +505,11 @@ const DEFAULT_PHOTOS = window.innerWidth <= 768 && PHOTOS_PORTRAIT.length > 0
   ? PHOTOS_PORTRAIT
   : PHOTOS_LANDSCAPE;
 const TABLES = [
-  {name:'新郎親屬桌', cat:'親屬'},
-  {name:'新娘親屬桌', cat:'親屬'},
+  {name:'新郎親屬桌',   cat:'親屬'},
+  {name:'新娘親屬桌',   cat:'親屬'},
   {name:'新世代教會家人桌', cat:'教會'},
-  {name:'新郎朋友桌', cat:'好友'},
-  {name:'新娘朋友桌', cat:'好友'},
+  {name:'新郎朋友桌',   cat:'同事・朋友・武昌教會朋友'},
+  {name:'新娘朋友桌',   cat:'同事・朋友'},
 ];
 // 步驟標籤（進度用）
 const STEP_LABELS = {
@@ -643,7 +644,9 @@ function pickCountB(v, el){
 
 function tryStep6b(){
   if(!data.count){ alert('請選擇出席人數'); return; }
-  goTo(7);
+  data.diet = '不適用（只參加婚禮）';
+  data.table = '不適用（只參加婚禮）';
+  goTo(9);  // 跳過飲食+桌次，直接到喜帖
 }
 
 function pickDiet(v){

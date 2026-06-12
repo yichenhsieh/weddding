@@ -266,7 +266,7 @@ body{
       <div class="choices">
         <div class="choice" onclick="pickRelation('男方親友 👨')"><div class="choice-key">A</div><div class="choice-text">👨 &nbsp;男方親友</div></div>
         <div class="choice" onclick="pickRelation('女方親友 👩')"><div class="choice-key">B</div><div class="choice-text">👩 &nbsp;女方親友</div></div>
-        <div class="choice" onclick="pickRelation('教會家人 ⛪')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會家人</div></div>
+        <div class="choice" onclick="pickRelation('教會朋友 ⛪')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會朋友</div></div>
       </div>      </div>
     </div>
 
@@ -317,6 +317,7 @@ body{
         <div class="choice" onclick="pickAttend('只參加婚禮')"><div class="choice-key">B</div><div class="choice-text">👰 &nbsp;我只能參加婚禮</div></div>
         <div class="choice" onclick="pickAttend('只參加婚宴')"><div class="choice-key">C</div><div class="choice-text">🥂 &nbsp;我只能參加婚宴</div></div>
         <div class="choice" onclick="pickAttend('無法到場')"><div class="choice-key">D</div><div class="choice-text">💝 &nbsp;很遺憾無法到場，獻上祝福</div></div>
+        <div class="choice" onclick="pickAttend('禮到人不到')"><div class="choice-key">E</div><div class="choice-text">🎁 &nbsp;禮到人不到，我要喜餅！</div></div>
       </div>      </div>
     </div>
 
@@ -606,10 +607,12 @@ function pickAttend(v){
   data.attend = v;
   document.querySelectorAll('#step5 .choice').forEach(c=>c.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  if(v==='無法到場'){
+  if(v==='無法到場'||v==='禮到人不到'){
     setTimeout(()=>{
       document.getElementById('successName').textContent = data.name+'，';
-      document.getElementById('successMsg').innerHTML = '非常感謝您的告知<br>期待下次有機會相聚 💝';
+      document.getElementById('successMsg').innerHTML = v==='禮到人不到'
+        ? '感謝您的心意 🎁<br>新人會將喜餅送到您手上！'
+        : '非常感謝您的告知<br>期待下次有機會相聚 💝';
       submitForm(true);
     }, 420);
   } else if(v==='只參加婚禮'){

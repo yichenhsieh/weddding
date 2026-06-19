@@ -148,10 +148,13 @@ body{
 
 /* ══ BTN ══ */
 .btn-next{
+  box-sizing:border-box;
+  height:50px;
   margin-top:32px;
-  display:inline-flex;align-items:center;gap:12px;
-  padding:13px 30px;
-  background:var(--gold);border:none;color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  padding:0 30px;
+  border:1px solid transparent;
+  background:var(--gold);color:#fff;
   font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;font-size:15px;font-weight:300;
   letter-spacing:3px;cursor:pointer;transition:background .2s,transform .1s
 }
@@ -163,6 +166,14 @@ body{
   color:rgba(255,255,255,.7)
 }
 .btn-next.ghost:hover{border-color:rgba(255,255,255,.7);color:#fff;background:rgba(255,255,255,.08)}
+.btn-next.back{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.25);
+  color:rgba(255,255,255,.5);
+  margin-top:32px;
+}
+.btn-next.back:hover{border-color:rgba(255,255,255,.5);color:rgba(255,255,255,.85);background:transparent}
+.btn-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 
 /* ══ BACK BUTTON ══ */
 .btn-back{
@@ -176,6 +187,31 @@ body{
 }
 .btn-back:hover{color:rgba(255,255,255,.8)}
 .btn-back.visible{display:flex}
+
+/* ══ INLINE BACK (inside step) ══ */
+.btn-back-inline{
+  box-sizing:border-box;
+  height:50px;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:0 24px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.3);
+  color:rgba(255,255,255,.55);
+  font-family:'jf-openhuninn-2.0','Noto Sans TC',sans-serif;
+  font-size:15px;font-weight:300;
+  letter-spacing:2px;cursor:pointer;
+  transition:all .2s;
+  margin-top:32px;
+  align-self:flex-start;
+}
+.btn-back-inline:hover{border-color:rgba(255,255,255,.6);color:rgba(255,255,255,.85)}
+
+/* btn-next no longer needs margin-top when paired */
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:32px}
+.btn-row .btn-next{margin-top:0}
+.btn-row .btn-back-inline{margin-top:0;align-self:center}
+.btn-confirm-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:24px}
+.btn-confirm-row .btn-next.pending{opacity:.35;pointer-events:none}
 
 /* ══ COVER ══ */
 .cover-names{
@@ -217,10 +253,7 @@ body{
 <div class="shell">
 
   <div class="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <button class="btn-back" id="backBtn" onclick="goBack()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    返回
-  </button>
+
 
   <div class="bg-layer" id="bgLayer"></div>
 
@@ -264,10 +297,15 @@ body{
       <div class="step-q">您與新人的關係？</div>
       <div class="step-hint">請選擇一個選項</div>
       <div class="choices">
-        <div class="choice" onclick="pickRelation('男方親友 👨')"><div class="choice-key">A</div><div class="choice-text">👨 &nbsp;男方親友</div></div>
-        <div class="choice" onclick="pickRelation('女方親友 👩')"><div class="choice-key">B</div><div class="choice-text">👩 &nbsp;女方親友</div></div>
-        <div class="choice" onclick="pickRelation('教會朋友 ⛪')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會朋友</div></div>
-      </div>      </div>
+        <div class="choice" onclick="pickRelation('男方親友 👨');showConfirm('s1')"><div class="choice-key">A</div><div class="choice-text">👨 &nbsp;男方親友</div></div>
+        <div class="choice" onclick="pickRelation('女方親友 👩');showConfirm('s1')"><div class="choice-key">B</div><div class="choice-text">👩 &nbsp;女方親友</div></div>
+        <div class="choice" onclick="pickRelation('教會朋友 ⛪');showConfirm('s1')"><div class="choice-key">C</div><div class="choice-text">⛪ &nbsp;教會朋友</div></div>
+      </div>
+      <div class="btn-confirm-row show" id="confirm-s1">
+        <button class="btn-next pending" id="next-s1" onclick="goTo(2)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goTo(0,false)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 回首頁</button>
+      </div>
+      </div>
     </div>
 
     <!-- 2: 姓名 -->
@@ -277,7 +315,10 @@ body{
       <div class="step-q">請問您的大名？</div>
       <div class="step-hint">新人很期待看到您的名字 🌸</div>
       <input class="big-input" type="text" id="inp-name" placeholder="在這裡輸入…" autocomplete="off" onkeydown="if(event.key==='Enter')tryName()">
-      <div><button class="btn-next" onclick="tryName()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="tryName()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>      </div>
     </div>
 
     <!-- 3: 綽號 -->
@@ -287,9 +328,10 @@ body{
       <div class="step-q" id="q3">新郎新娘怎麼稱呼您？</div>
       <div class="step-hint">例如：阿明、小姑姑…（可略過）</div>
       <input class="big-input" type="text" id="inp-nickname" placeholder="在這裡輸入…" autocomplete="off" onkeydown="if(event.key==='Enter')goTo(4)">
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="btn-row">
         <button class="btn-next" onclick="saveNickname()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(4)">略過</button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
 
@@ -300,9 +342,10 @@ body{
       <div class="step-q">您的聯絡電話？</div>
       <div class="step-hint">方便新人與您確認細節（可略過）</div>
       <input class="big-input" type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onkeydown="if(event.key==='Enter')goTo(5)">
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="btn-row">
         <button class="btn-next" onclick="goTo(5)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(5)">略過</button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
 
@@ -313,12 +356,18 @@ body{
       <div class="step-q" id="q5">您會出席嗎？</div>
       <div class="step-hint">請選擇出席方式</div>
       <div class="choices">
-        <div class="choice" onclick="pickAttend('婚禮＋婚宴都參加')"><div class="choice-key">A</div><div class="choice-text">💒 &nbsp;婚禮＋婚宴，我都會參加</div></div>
-        <div class="choice" onclick="pickAttend('只參加婚禮')"><div class="choice-key">B</div><div class="choice-text">👰 &nbsp;我只能參加婚禮</div></div>
-        <div class="choice" onclick="pickAttend('只參加婚宴')"><div class="choice-key">C</div><div class="choice-text">🥂 &nbsp;我只能參加婚宴</div></div>
-        <div class="choice" onclick="pickAttend('無法到場')"><div class="choice-key">D</div><div class="choice-text">💝 &nbsp;很遺憾無法到場，獻上祝福</div></div>
-        <div class="choice" onclick="pickAttend('禮到人不到')"><div class="choice-key">E</div><div class="choice-text">🎁 &nbsp;禮到人不到，我要喜餅！</div></div>
-      </div>      </div>
+        <div class="choice" onclick="pickAttend('婚禮＋婚宴都參加');showConfirm('s5')"><div class="choice-key">A</div><div class="choice-text">💒 &nbsp;婚禮＋婚宴，我都會參加</div></div>
+        <div class="choice" onclick="pickAttend('只參加婚禮');showConfirm('s5')"><div class="choice-key">B</div><div class="choice-text">👰 &nbsp;我只能參加婚禮</div></div>
+        <div class="choice" onclick="pickAttend('只參加婚宴');showConfirm('s5')"><div class="choice-key">C</div><div class="choice-text">🥂 &nbsp;我只能參加婚宴</div></div>
+        <div class="choice" onclick="pickAttend('無法到場');showConfirm('s5')"><div class="choice-key">D</div><div class="choice-text">💝 &nbsp;很遺憾無法到場，獻上祝福</div></div>
+        <div class="choice" onclick="pickAttend('禮到人不到，我要喜餅');showConfirm('s5')"><div class="choice-key">E</div><div class="choice-text">🎁 &nbsp;禮到人不到，我要喜餅！</div></div>
+      </div>
+      </div>
+            <div class="btn-confirm-row show" id="confirm-s5">
+        <button class="btn-next pending" id="next-s5" onclick="confirmAttend()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>
+      </div>
     </div>
 
     <!-- 5b: 婚禮時間資訊（只參加婚禮時顯示） -->
@@ -342,7 +391,10 @@ body{
           <div style="font-size:12px;color:rgba(255,255,255,.25);letter-spacing:.5px">高雄聯上大飯店 · 環球廳</div>
         </div>
       </div>
-      <div><button class="btn-next" onclick="goTo('6b')">了解，繼續填寫 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="goTo('6b')">了解，繼續填寫 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>      </div>
     </div>
 
     <!-- 6: 出席人數 + 兒童座椅 -->
@@ -372,7 +424,10 @@ body{
           </div>
         </div>
       </div>
-      <div><button class="btn-next" onclick="tryStep6()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="tryStep6()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>      </div>
     </div>
 
     <!-- 6b: 只參加婚禮 → 只問人數 -->
@@ -389,7 +444,10 @@ body{
         <div class="choice" onclick="pickCountB('4',this)"><div class="choice-key">4</div><div class="choice-text">4 人</div></div>
         <div class="choice" onclick="pickCountB('5',this)"><div class="choice-key">5</div><div class="choice-text">5 人</div></div>
       </div>
-      <div><button class="btn-next" onclick="tryStep6b()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="tryStep6b()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>
       </div>
     </div>
 
@@ -400,9 +458,15 @@ body{
       <div class="step-q">有特殊飲食需求嗎？</div>
       <div class="step-hint">我們會提前告知餐廳安排</div>
       <div class="choices">
-        <div class="choice" onclick="pickDiet('葷食')"><div class="choice-key">A</div><div class="choice-text">🍖 &nbsp;葷食</div></div>
-        <div class="choice" onclick="pickDiet('素食')"><div class="choice-key">B</div><div class="choice-text">🥦 &nbsp;素食</div></div>
-      </div>      </div>
+        <div class="choice" onclick="pickDiet('葷食');showConfirm('s7')"><div class="choice-key">A</div><div class="choice-text">🍖 &nbsp;葷食</div></div>
+        <div class="choice" onclick="pickDiet('素食');showConfirm('s7')"><div class="choice-key">B</div><div class="choice-text">🥦 &nbsp;素食</div></div>
+      </div>
+      </div>
+            <div class="btn-confirm-row show" id="confirm-s7">
+        <button class="btn-next pending" id="next-s7" onclick="goTo(8)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>
+      </div>
     </div>
 
     <!-- 8: 桌次 -->
@@ -412,7 +476,10 @@ body{
       <div class="step-q">您屬於哪一桌？</div>
       <div class="step-hint">新人已為您安排好座位</div>
       <div class="table-choices" id="tableChoices"></div>
-      <div><button class="btn-next" onclick="tryNextTable()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>      </div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="tryNextTable()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>      </div>
     </div>
 
     <!-- 9: 喜帖 -->
@@ -422,10 +489,16 @@ body{
       <div class="step-q">需要寄送喜帖嗎？</div>
       <div class="step-hint">請選擇您希望收到的方式</div>
       <div class="choices">
-        <div class="choice" onclick="pickInvite('電子喜帖')"><div class="choice-key">A</div><div class="choice-text">🌐 &nbsp;響應環保，我要電子喜帖</div></div>
-        <div class="choice" onclick="pickInvite('紙本喜帖')"><div class="choice-key">B</div><div class="choice-text">📮 &nbsp;要留做紀念，我要紙本喜帖</div></div>
-        <div class="choice" onclick="pickInvite('不用唷')"><div class="choice-key">C</div><div class="choice-text">✌️ &nbsp;不用唷，婚禮相關資訊我知道了</div></div>
-      </div>      </div>
+        <div class="choice" onclick="pickInvite('電子喜帖');showConfirm('s9')"><div class="choice-key">A</div><div class="choice-text">🌐 &nbsp;響應環保，我要電子喜帖</div></div>
+        <div class="choice" onclick="pickInvite('紙本喜帖');showConfirm('s9')"><div class="choice-key">B</div><div class="choice-text">📮 &nbsp;要留做紀念，我要紙本喜帖</div></div>
+        <div class="choice" onclick="pickInvite('不用唷');showConfirm('s9')"><div class="choice-key">C</div><div class="choice-text">✌️ &nbsp;不用唷，婚禮相關資訊我知道了</div></div>
+      </div>
+      </div>
+            <div class="btn-confirm-row show" id="confirm-s9">
+        <button class="btn-next pending" id="next-s9" onclick="confirmInvite()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
+      </div>
+      </div>
     </div>
 
     <!-- 10a: 電子喜帖 → Email -->
@@ -435,9 +508,11 @@ body{
       <div class="step-q">請留下您的 Email</div>
       <div class="step-hint">新人會將電子喜帖寄到您的信箱 📧</div>
       <input class="big-input" type="email" id="inp-email" placeholder="example@gmail.com" autocomplete="email" onkeydown="if(event.key==='Enter')saveEmail()">
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="btn-row">
         <button class="btn-next" onclick="saveEmail()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(11)">略過</button>
+      
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
 
@@ -448,9 +523,11 @@ body{
       <div class="step-q">請留下您的郵寄地址</div>
       <div class="step-hint">813 高雄市 XX 區 XX 路 XX 號（請依格式填寫）📮</div>
       <input class="big-input" type="text" id="inp-address" placeholder="縣市 · 區 · 路街地址…" autocomplete="street-address" onkeydown="if(event.key==='Enter')saveAddress()">
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="btn-row">
         <button class="btn-next" onclick="saveAddress()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-next ghost" onclick="goTo(11)">略過</button>
+      
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
 
@@ -464,6 +541,7 @@ body{
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px">
         <button class="btn-next" onclick="submitForm()">送出回覆 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 19 19"/></svg></button>
         <button class="btn-next ghost" onclick="submitForm()">略過並送出</button>
+        <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
 
@@ -552,10 +630,11 @@ function goTo(n, addHistory=true){
   // scroll step itself to top
   const nextEl = document.getElementById('step'+n);
   if(nextEl) nextEl.scrollTop = 0;
+  // reset next buttons to pending state on step change (back buttons stay visible)
+  document.querySelectorAll('.btn-confirm-row .btn-next').forEach(b=>b.classList.add('pending'));
   requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('active')));
   updateProgress();
   updateCounters();
-  updateBackBtn();
   setTimeout(()=>{ const inp=next.querySelector('.big-input'); if(inp) inp.focus(); },560);
 }
 
@@ -564,9 +643,9 @@ function goBack(){
   goTo(history.pop(), false);
 }
 
-function updateBackBtn(){
-  const btn = document.getElementById('backBtn');
-  (cur===0||cur===12) ? btn.classList.remove('visible') : btn.classList.add('visible');
+function showConfirm(stepId){
+  const btn = document.getElementById('next-'+stepId);
+  if(btn) btn.classList.remove('pending');
 }
 
 function updateProgress(){
@@ -586,7 +665,6 @@ function pickRelation(v){
   data.relation = v;
   document.querySelectorAll('#step1 .choice').forEach(c=>c.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  setTimeout(()=>goTo(2), 380);
 }
 
 function tryName(){
@@ -607,18 +685,23 @@ function pickAttend(v){
   data.attend = v;
   document.querySelectorAll('#step5 .choice').forEach(c=>c.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  if(v==='無法到場'||v==='禮到人不到'){
-    setTimeout(()=>{
-      document.getElementById('successName').textContent = data.name+'，';
-      document.getElementById('successMsg').innerHTML = v==='禮到人不到'
-        ? '感謝您的心意 🎁<br>新人會將喜餅送到您手上！'
-        : '非常感謝您的告知<br>期待下次有機會相聚 💝';
-      submitForm(true);
-    }, 420);
+}
+
+function confirmAttend(){
+  const v = data.attend;
+  if(!v){ alert('請選擇出席方式'); return; }
+  if(v==='無法到場'){
+    document.getElementById('successName').textContent = data.name+'，';
+    document.getElementById('successMsg').innerHTML = '非常感謝您的告知<br>期待下次有機會相聚 💝';
+    submitForm(true);
+  } else if(v==='禮到人不到，我要喜餅'){
+    document.getElementById('successName').textContent = data.name+'，';
+    document.getElementById('successMsg').innerHTML = '收到！新人會準備喜餅給您 🎁<br>感謝您的心意，期待下次相聚';
+    submitForm(true);
   } else if(v==='只參加婚禮'){
-    setTimeout(()=>goTo('5b'), 380);
+    goTo('5b');
   } else {
-    setTimeout(()=>goTo(6), 380);
+    goTo(6);
   }
 }
 
@@ -658,7 +741,6 @@ function pickDiet(v){
   data.diet = v;
   document.querySelectorAll('#step7 .choice').forEach(c=>c.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  setTimeout(()=>goTo(8), 380);
 }
 
 function pickTable(i){
@@ -676,9 +758,14 @@ function pickInvite(v){
   data.invite = v;
   document.querySelectorAll('#step9 .choice').forEach(c=>c.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  if(v==='電子喜帖') setTimeout(()=>goTo('10a'), 380);
-  else if(v==='紙本喜帖') setTimeout(()=>goTo('10b'), 380);
-  else setTimeout(()=>goTo(11), 380);
+}
+
+function confirmInvite(){
+  const v = data.invite;
+  if(!v){ alert('請選擇喜帖方式'); return; }
+  if(v==='電子喜帖') goTo('10a');
+  else if(v==='紙本喜帖') goTo('10b');
+  else goTo(11);
 }
 
 function saveEmail(){

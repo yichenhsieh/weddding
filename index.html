@@ -700,11 +700,11 @@ function confirmAttend(){
   const v = data.attend;
   if(!v){ alert('請選擇出席方式'); return; }
   if(v==='無法到場'){
-    document.getElementById('successName').textContent = data.name+'，';
+    document.getElementById('successName').textContent = data.name;
     document.getElementById('successMsg').innerHTML = '非常感謝您的告知<br>期待下次有機會相聚 💝';
     submitForm(true);
   } else if(v==='禮到人不到，我要喜餅'){
-    document.getElementById('successName').textContent = data.name+'，';
+    document.getElementById('successName').textContent = data.name;
     document.getElementById('successMsg').innerHTML = '收到！新人會準備喜餅給您 🎁<br>感謝您的心意，期待下次相聚';
     submitForm(true);
   } else if(v==='只參加婚禮'){
@@ -870,7 +870,7 @@ async function submitForm(skipSteps=false){
   }
   data.phone = document.getElementById('inp-phone').value.trim();
   data.timestamp = new Date().toLocaleString('zh-TW');
-  document.getElementById('successName').textContent = data.name+'，';
+  document.getElementById('successName').textContent = data.name;
   goTo(12);
   try{
     if(!SHEET_URL.includes('請填入')){

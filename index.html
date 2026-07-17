@@ -349,11 +349,10 @@ body{
       <div class="step-inner">      <div class="step-counter" id="counter4"></div>
       <div class="step-label">聯絡方式</div>
       <div class="step-q">您的聯絡電話？</div>
-      <div class="step-hint">方便新人與您確認細節（可略過）</div>
-      <input class="big-input" type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onkeydown="if(event.key==='Enter')goTo(5)">
+      <div class="step-hint">方便新人與您確認細節</div>
+      <input class="big-input" type="tel" id="inp-phone" placeholder="09xx-xxx-xxx" onkeydown="if(event.key==='Enter')goPhone()">
       <div class="btn-row">
-        <button class="btn-next" onclick="goTo(5)">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-        <button class="btn-next ghost" onclick="goTo(5)">略過</button>
+        <button class="btn-next" onclick="goPhone()">繼續 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         <button class="btn-back-inline" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> 返回</button>
       </div>      </div>
     </div>
@@ -855,6 +854,13 @@ function buildDots(){
 function updateDots(){
   const dots=document.getElementById('slideDots').children;
   Array.from(dots).forEach((d,i)=>{ d.style.background='rgba(255,255,255,'+(i===slideIdx?'.85':'.3')+')'; });
+}
+
+function goPhone(){
+  const v = document.getElementById('inp-phone').value.trim();
+  if(!v){ alert('請填寫聯絡電話'); return; }
+  data.phone = v;
+  goTo(5);
 }
 
 // ══ SUBMIT ══
